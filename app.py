@@ -1,5 +1,11 @@
-import openai
 import streamlit as st
+
+import openai
+
+from langchain.agents import load_tools
+from langchain.agents import initialize_agent
+from langchain.agents import AgentType
+from langchain.llms import OpenAI
 
 st.write("hello world")
 
@@ -34,6 +40,28 @@ def call_chatgpt(prompt: str) -> str:
     # Return the generated AI response.
     return ans
 
+SERPAPI_API_KEY = st.secrets["SERPAPI_API_KEY"]
+
+def call_langchain(prompt: str) -> str:
+    llm = OpenAI(temperature=0)
+    tools = load_tools(["serpapi", "llm-math"], llm=llm)
+    agent = initialize_agent(
+        tools,
+        llm,
+        agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
+        verbose=True)
+    output = agent.run(prompt)
+
+    return output
+
 question = st.text_input("Input a question", "Tell me a joke")
-answer = call_chatgpt(question)
+ref_from_internet = call_langchain(question)
+
+engineered_prompt = f"""
+    Based on the context: {ref_from_internet}, 
+    answer the user question: {question}
+"""
+
+answer = call_chatgpt(engineered_prompt)
+st.write(ref_from_internet)
 st.write(answer)
