@@ -7,8 +7,6 @@ from langchain.agents import initialize_agent
 from langchain.agents import AgentType
 from langchain.llms import OpenAI
 
-st.write("hello world")
-
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 def call_chatgpt(prompt: str) -> str:
@@ -63,5 +61,4 @@ engineered_prompt = f"""
 """
 
 answer = call_chatgpt(engineered_prompt)
-st.write(ref_from_internet)
 st.write(answer)
