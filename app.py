@@ -11,6 +11,8 @@ import pandas as pd
 
 from scipy.spatial.distance import cosine
 
+from typing import Dict, List, Union
+
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 def call_chatgpt(prompt: str) -> str:
