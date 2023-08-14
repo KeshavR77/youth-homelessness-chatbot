@@ -1,4 +1,5 @@
+google-search-results
 langchain
 openai
+scipy
 streamlit
-google-search-results
