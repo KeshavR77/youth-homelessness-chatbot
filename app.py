@@ -116,7 +116,7 @@ def convert_to_list_of_dict(df: pd.DataFrame) -> List[Dict[str, str]]:
     # Return the list of dictionaries
     return result
 
-df = pd.read_csv("THV-Flyer-and-application")
+df = pd.read_csv("THV-Flyer-and-application.csv")
 
 question = st.text_input("Input a question", "Tell me a joke")
 
