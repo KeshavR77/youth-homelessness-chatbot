@@ -67,7 +67,7 @@ def call_langchain(prompt: str) -> str:
 
     return output
 
-client = openai()
+client = OpenAI()
 
 def openai_text_embedding(prompt: str) -> str:
     return client.Embedding.create(input=prompt, model="text-embedding-ada-002")[
