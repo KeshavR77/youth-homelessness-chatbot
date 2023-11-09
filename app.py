@@ -1,6 +1,9 @@
 import streamlit as st
 
 import openai
+from openai import OpenAI
+
+client = OpenAI()
 
 from langchain.agents import load_tools
 from langchain.agents import initialize_agent
@@ -14,8 +17,6 @@ from scipy.spatial.distance import cosine
 from typing import Dict, List, Union
 
 openai.api_key = st.secrets["OPENAI_API_KEY"]
-
-client = OpenAI()
 
 def merge_dataframes(dataframes):
     # Concatenate the list of dataframes
