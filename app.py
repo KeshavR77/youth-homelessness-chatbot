@@ -67,8 +67,10 @@ def call_langchain(prompt: str) -> str:
 
     return output
 
+client = openai()
+
 def openai_text_embedding(prompt: str) -> str:
-    return openai.Embedding.create(input=prompt, model="text-embedding-ada-002")[
+    return client.Embedding.create(input=prompt, model="text-embedding-ada-002")[
         "data"
     ][0]["embedding"]
 
