@@ -131,7 +131,7 @@ Board_of_Directors = pd.read_csv("YSA_CSVS/Board_of_Directors.csv")
 Definition_Of_Homeless = pd.read_csv("YSA_CSVS/Definition_Of_Homeless.csv")
 Our_Team = pd.read_csv("YSA_CSVS/Our_Team.csv")
 Programs = pd.read_csv("YSA_CSVS/Programs.csv")
-Tiny_House_Village_Application = pd.read_csv("YSA_CSVS/Tiny_House_Village_Application.csv")
+Tiny_House_Village_Application_Process = pd.read_csv("YSA_CSVS/Tiny_House_Village_Application_Process.csv")
 Tiny_House_Village_Overview = pd.read_csv("YSA_CSVS/Tiny_House_Village_Overview.csv")
 Tiny_House_Village = pd.read_csv("YSA_CSVS/Tiny_House_Village.csv")
 Youth_Leaders_Examples = pd.read_csv("YSA_CSVS/Youth_Leaders_Examples.csv")
@@ -139,7 +139,7 @@ Youth_Leaders_Overview = pd.read_csv("YSA_CSVS/Youth_Leaders_Overview.csv")
 YSA_Supporters_Lists = pd.read_csv("YSA_CSVS/YSA_Supporters_Lists.csv")
 YSA_Supporters_Overview = pd.read_csv("YSA_CSVS/YSA_Supporters_Overview.csv")
 
-df = merge_dataframes([About_YSA, Board_of_Directors, Definition_Of_Homeless, Our_Team, Programs, Tiny_House_Village_Application,
+df = merge_dataframes([About_YSA, Board_of_Directors, Definition_Of_Homeless, Our_Team, Programs, Tiny_House_Village_Application_Process,
 Tiny_House_Village_Overview, Tiny_House_Village, Youth_Leaders_Examples, Youth_Leaders_Overview, YSA_Supporters_Lists,
 YSA_Supporters_Overview])
 
