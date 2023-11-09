@@ -15,6 +15,15 @@ from typing import Dict, List, Union
 
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
+def merge_dataframes(dataframes):
+    # Concatenate the list of dataframes
+    combined_dataframe = pd.concat(dataframes, ignore_index=True)
+
+    # Ensure that the resulting dataframe only contains the columns "context", "questions", "answers"
+    combined_dataframe = combined_dataframe[['context', 'questions', 'answers']]
+
+    return combined_dataframe
+
 def call_chatgpt(prompt: str) -> str:
     """
     Uses the OpenAI API to generate an AI response to a prompt.
@@ -116,7 +125,23 @@ def convert_to_list_of_dict(df: pd.DataFrame) -> List[Dict[str, str]]:
     # Return the list of dictionaries
     return result
 
-df = pd.read_csv("THV-Flyer-and-application.csv")
+# read all csvs
+About_YSA = pd.read_csv("YSA_CSVS/About_YSA.csv")
+Board_of_Directors = pd.read_csv("YSA_CSVS/Board_of_Directors.csv")
+Definition_Of_Homeless = pd.read_csv("YSA_CSVS/Definition_Of_Homeless.csv")
+Our_Team = pd.read_csv("YSA_CSVS/Our_Team.csv")
+Programs = pd.read_csv("YSA_CSVS/Programs.csv")
+Tiny_House_Village_Application = pd.read_csv("YSA_CSVS/Tiny_House_Village_Application.csv")
+Tiny_House_Village_Overview = pd.read_csv("YSA_CSVS/Tiny_House_Village_Overview.csv")
+Tiny_House_Village = pd.read_csv("YSA_CSVS/Tiny_House_Village.csv")
+Youth_Leaders_Examples = pd.read_csv("YSA_CSVS/Youth_Leaders_Examples.csv")
+Youth_Leaders_Overview = pd.read_csv("YSA_CSVS/Youth_Leaders_Overview.csv")
+YSA_Supporters_Lists = pd.read_csv("YSA_CSVS/YSA_Supporters_Lists.csv")
+YSA_Supporters_Overview = pd.read_csv("YSA_CSVS/YSA_Supporters_Overview.csv")
+
+df = merge_dataframes([About_YSA, Board_of_Directors, Definition_Of_Homeless, Our_Team, Programs, Tiny_House_Village_Application,
+Tiny_House_Village_Overview, Tiny_House_Village, Youth_Leaders_Examples, Youth_Leaders_Overview, YSA_Supporters_Lists,
+YSA_Supporters_Overview])
 
 question = st.text_input("Input a question", "Tell me a joke")
 
