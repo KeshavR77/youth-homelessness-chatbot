@@ -3,7 +3,7 @@ import streamlit as st
 import openai
 from openai import OpenAI
 
-client = OpenAI()
+client = OpenAI(client = OpenAI(api_key = st.secrets["OPENAI_API_KEY"]))
 
 from langchain.agents import load_tools
 from langchain.agents import initialize_agent
