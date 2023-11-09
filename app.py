@@ -15,6 +15,8 @@ from typing import Dict, List, Union
 
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
+client = OpenAI()
+
 def merge_dataframes(dataframes):
     # Concatenate the list of dataframes
     combined_dataframe = pd.concat(dataframes, ignore_index=True)
@@ -37,7 +39,7 @@ def call_chatgpt(prompt: str) -> str:
     """
 
     # Use the OpenAI API to generate a response based on the input prompt.
-    response = openai.Completion.create(
+    response = client.Completion.create(
         model="text-davinci-003",
         prompt=prompt,
         temperature=0.5,
@@ -66,8 +68,6 @@ def call_langchain(prompt: str) -> str:
     output = agent.run(prompt)
 
     return output
-
-client = OpenAI()
 
 def openai_text_embedding(prompt: str) -> str:
     return client.Embedding.create(input=prompt, model="text-embedding-ada-002")[
