@@ -10,6 +10,7 @@ import openai
 # from langchain.agents import AgentType
 # from langchain.llms import OpenAI
 
+import numpy as np
 import pandas as pd
 
 from scipy.spatial.distance import cosine
@@ -40,7 +41,7 @@ def call_chatgpt(prompt: str) -> str:
     """
 
     # Use the OpenAI API to generate a response based on the input prompt.
-    response = client.Completion.create(
+    response = openai.Completion.create(
         model="text-davinci-003",
         prompt=prompt,
         temperature=0.5,
@@ -66,12 +67,12 @@ def call_chatgpt(prompt: str) -> str:
 #         llm,
 #         agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
 #         verbose=True)
-#     output = agent.run(prompt)
+    # output = agent.run(prompt)
 
-    return output
+    # return output
 
 def openai_text_embedding(prompt: str) -> str:
-    return client.Embedding.create(input=prompt, model="text-embedding-ada-002")[
+    return openai.Embedding.create(input=prompt, model="text-embedding-ada-002")[
         "data"
     ][0]["embedding"]
 
