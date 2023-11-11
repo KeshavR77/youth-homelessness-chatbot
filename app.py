@@ -1,14 +1,14 @@
 import streamlit as st
 
 import openai
-from openai import OpenAI
+# from openai import OpenAI
 
-client = OpenAI(api_key = st.secrets["OPENAI_API_KEY"])
+# client = OpenAI(api_key = st.secrets["OPENAI_API_KEY"])
 
-from langchain.agents import load_tools
-from langchain.agents import initialize_agent
-from langchain.agents import AgentType
-from langchain.llms import OpenAI
+# from langchain.agents import load_tools
+# from langchain.agents import initialize_agent
+# from langchain.agents import AgentType
+# from langchain.llms import OpenAI
 
 import pandas as pd
 
@@ -56,17 +56,17 @@ def call_chatgpt(prompt: str) -> str:
     # Return the generated AI response.
     return ans
 
-SERPAPI_API_KEY = st.secrets["SERPAPI_API_KEY"]
+# SERPAPI_API_KEY = st.secrets["SERPAPI_API_KEY"]
 
-def call_langchain(prompt: str) -> str:
-    llm = OpenAI(temperature=0)
-    tools = load_tools(["serpapi", "llm-math"], llm=llm)
-    agent = initialize_agent(
-        tools,
-        llm,
-        agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
-        verbose=True)
-    output = agent.run(prompt)
+# def call_langchain(prompt: str) -> str:
+#     llm = OpenAI(temperature=0)
+#     tools = load_tools(["serpapi", "llm-math"], llm=llm)
+#     agent = initialize_agent(
+#         tools,
+#         llm,
+#         agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
+#         verbose=True)
+#     output = agent.run(prompt)
 
     return output
 
@@ -153,11 +153,12 @@ df_screened_by_dist_score = add_dist_score_column(
 )
 qa_pairs = convert_to_list_of_dict(df_screened_by_dist_score)
 
-ref_from_internet = call_langchain(question)
+# ref_from_internet = call_langchain(question)
 
+
+# Based on the context: {ref_from_internet}, 
 engineered_prompt = f"""
-    Based on the context: {ref_from_internet}, 
-    and also based on the context: {qa_pairs},
+    Based on the context: {qa_pairs},
     answer the user question: {question}
 """
 
