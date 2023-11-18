@@ -147,7 +147,7 @@ df = merge_dataframes([About_YSA, Board_of_Directors, Definition_Of_Homeless, Ou
 Tiny_House_Village_Overview, Tiny_House_Village, Youth_Leaders_Examples, Youth_Leaders_Overview, YSA_Supporters_Lists,
 YSA_Supporters_Overview])
 
-question = st.text_input("Input a question", "Tell me a joke")
+question = st.text_input("Ask any question about YSA", "Tell me about YSA")
 
 df_screened_by_dist_score = add_dist_score_column(
     df, question
