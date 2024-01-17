@@ -156,7 +156,6 @@ qa_pairs = convert_to_list_of_dict(df_screened_by_dist_score)
 
 # ref_from_internet = call_langchain(question)
 
-
 # Based on the context: {ref_from_internet}, 
 engineered_prompt = f"""
     Based on the context: {qa_pairs},
