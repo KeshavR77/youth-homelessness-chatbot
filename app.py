@@ -17,6 +17,11 @@ from scipy.spatial.distance import cosine
 
 from typing import Dict, List, Union
 
+from langchain.document_loaders import TextLoader
+from langchain.embeddings.sentence_transformer import SentenceTransformerEmbeddings
+from langchain.text_splitter import CharacterTextSplitter
+from langchain.vectorstores import Chroma
+
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 def merge_dataframes(dataframes):
@@ -130,35 +135,65 @@ def convert_to_list_of_dict(df: pd.DataFrame) -> List[Dict[str, str]]:
     return result
 
 # read all csvs
-About_YSA = pd.read_csv("YSA_CSVS/About_YSA.csv")
-Board_of_Directors = pd.read_csv("YSA_CSVS/Board_of_Directors.csv")
-Definition_Of_Homeless = pd.read_csv("YSA_CSVS/Definition_Of_Homeless.csv")
-Our_Team = pd.read_csv("YSA_CSVS/Our_Team.csv")
-Programs = pd.read_csv("YSA_CSVS/Programs.csv")
-Tiny_House_Village_Application_Process = pd.read_csv("YSA_CSVS/Tiny_House_Village_Application_Process.csv")
-Tiny_House_Village_Overview = pd.read_csv("YSA_CSVS/Tiny_House_Village_Overview.csv")
-Tiny_House_Village = pd.read_csv("YSA_CSVS/Tiny_House_Village.csv")
-Youth_Leaders_Examples = pd.read_csv("YSA_CSVS/Youth_Leaders_Examples.csv")
-Youth_Leaders_Overview = pd.read_csv("YSA_CSVS/Youth_Leaders_Overview.csv")
-YSA_Supporters_Lists = pd.read_csv("YSA_CSVS/YSA_Supporters_Lists.csv")
-YSA_Supporters_Overview = pd.read_csv("YSA_CSVS/YSA_Supporters_Overview.csv")
+# About_YSA = pd.read_csv("YSA_CSVS/About_YSA.csv")
+# Board_of_Directors = pd.read_csv("YSA_CSVS/Board_of_Directors.csv")
+# Definition_Of_Homeless = pd.read_csv("YSA_CSVS/Definition_Of_Homeless.csv")
+# Our_Team = pd.read_csv("YSA_CSVS/Our_Team.csv")
+# Programs = pd.read_csv("YSA_CSVS/Programs.csv")
+# Tiny_House_Village_Application_Process = pd.read_csv("YSA_CSVS/Tiny_House_Village_Application_Process.csv")
+# Tiny_House_Village_Overview = pd.read_csv("YSA_CSVS/Tiny_House_Village_Overview.csv")
+# Tiny_House_Village = pd.read_csv("YSA_CSVS/Tiny_House_Village.csv")
+# Youth_Leaders_Examples = pd.read_csv("YSA_CSVS/Youth_Leaders_Examples.csv")
+# Youth_Leaders_Overview = pd.read_csv("YSA_CSVS/Youth_Leaders_Overview.csv")
+# YSA_Supporters_Lists = pd.read_csv("YSA_CSVS/YSA_Supporters_Lists.csv")
+# YSA_Supporters_Overview = pd.read_csv("YSA_CSVS/YSA_Supporters_Overview.csv")
 
-df = merge_dataframes([About_YSA, Board_of_Directors, Definition_Of_Homeless, Our_Team, Programs, Tiny_House_Village_Application_Process,
-Tiny_House_Village_Overview, Tiny_House_Village, Youth_Leaders_Examples, Youth_Leaders_Overview, YSA_Supporters_Lists,
-YSA_Supporters_Overview])
+# df = merge_dataframes([About_YSA, Board_of_Directors, Definition_Of_Homeless, Our_Team, Programs, Tiny_House_Village_Application_Process,
+# Tiny_House_Village_Overview, Tiny_House_Village, Youth_Leaders_Examples, Youth_Leaders_Overview, YSA_Supporters_Lists,
+# YSA_Supporters_Overview])
+
+file_names = [
+    "YSA_TXTS/About_YSA_output_row_0.txt",
+    "YSA_TXTS/About_YSA_output_row_1.txt",
+    "YSA_TXTS/About_YSA_output_row_2.txt",
+]
+
+# Initialize an empty list to hold all documents
+all_documents = [] # this is just a copy, you don't have to use this
+
+# Iterate over each file and load its contents
+for file_name in file_names:
+    loader = TextLoader(file_name)
+    documents = loader.load()
+    all_documents.extend(documents)
+
+# Split the loaded documents into chunks
+text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+docs = text_splitter.split_documents(all_documents)
+
+# Create the open-source embedding function
+embedding_function = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
+
+# Load the documents into Chroma
+db = Chroma.from_documents(docs, embedding_function)
+
 
 question = st.text_input("Ask any question about YSA", "Tell me about YSA")
 
-df_screened_by_dist_score = add_dist_score_column(
-    df, question
-)
-qa_pairs = convert_to_list_of_dict(df_screened_by_dist_score)
+docs = db.similarity_search(question)
+
+ref_from_db_search = docs[0].page_content
+
+# df_screened_by_dist_score = add_dist_score_column(
+#     df, question
+# )
+# qa_pairs = convert_to_list_of_dict(df_screened_by_dist_score)
 
 # ref_from_internet = call_langchain(question)
 
 # Based on the context: {ref_from_internet}, 
 engineered_prompt = f"""
-    Based on the context: {qa_pairs},
+    Based on the context: {ref_from_db_search},
     answer the user question: {question}
 """
 
