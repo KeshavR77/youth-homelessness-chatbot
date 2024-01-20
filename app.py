@@ -153,9 +153,13 @@ def convert_to_list_of_dict(df: pd.DataFrame) -> List[Dict[str, str]]:
 # YSA_Supporters_Overview])
 
 file_names = [
-    "YSA_TXTS/About_YSA_output_row_0.txt",
-    "YSA_TXTS/About_YSA_output_row_1.txt",
-    "YSA_TXTS/About_YSA_output_row_2.txt",
+    "YSA_TXTS/About_YSA_output_page_0.txt",
+    "YSA_TXTS/About_YSA_output_page_1.txt",
+    "YSA_TXTS/About_YSA_output_page_2.txt",
+    "YSA_TXTS/About_YSA_output_page_3.txt",
+    "YSA_TXTS/About_YSA_output_page_4.txt",
+    "YSA_TXTS/About_YSA_output_page_5.txt",
+    "YSA_TXTS/About_YSA_output_page_6.txt",
 ]
 
 # Initialize an empty list to hold all documents
