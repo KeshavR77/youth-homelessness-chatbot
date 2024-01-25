@@ -178,28 +178,6 @@ embedding_function = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2"
 # Load the documents into Chroma
 db = Chroma.from_documents(docs, embedding_function)
 
-
-question = st.text_input("Ask any question about YSA", "Tell me about YSA")
-
-docs = db.similarity_search(question)
-
-ref_from_db_search = docs[0].page_content
-
-# df_screened_by_dist_score = add_dist_score_column(
-#     df, question
-# )
-# qa_pairs = convert_to_list_of_dict(df_screened_by_dist_score)
-
-# ref_from_internet = call_langchain(question)
-
-# Based on the context: {ref_from_internet}, 
-engineered_prompt = f"""
-    Based on the context: {ref_from_db_search},
-    answer the user question: {question}
-"""
-
-answer = call_chatgpt(engineered_prompt)
-
 # st.write(answer)
 
 st.title("Youth Homelessness Chatbot")
@@ -219,6 +197,27 @@ if prompt := st.chat_input("Tell me about YSA"):
     st.chat_message("user").markdown(prompt)
     # Add user message to chat history
     st.session_state.messages.append({"role": "user", "content": prompt})
+
+    question = prompt
+
+    docs = db.similarity_search(question)
+
+    ref_from_db_search = docs[0].page_content
+
+    # df_screened_by_dist_score = add_dist_score_column(
+    #     df, question
+    # )
+    # qa_pairs = convert_to_list_of_dict(df_screened_by_dist_score)
+
+    # ref_from_internet = call_langchain(question)
+
+    # Based on the context: {ref_from_internet}, 
+    engineered_prompt = f"""
+        Based on the context: {ref_from_db_search},
+        answer the user question: {question}
+    """
+
+    answer = call_chatgpt(engineered_prompt)
 
     response = answer
     # Display assistant response in chat message container
