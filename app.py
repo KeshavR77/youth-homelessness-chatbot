@@ -152,15 +152,12 @@ def convert_to_list_of_dict(df: pd.DataFrame) -> List[Dict[str, str]]:
 # Tiny_House_Village_Overview, Tiny_House_Village, Youth_Leaders_Examples, Youth_Leaders_Overview, YSA_Supporters_Lists,
 # YSA_Supporters_Overview])
 
-file_names = [
-    "YSA_TXTS/About_YSA_output_page_0.txt",
-    "YSA_TXTS/About_YSA_output_page_1.txt",
-    "YSA_TXTS/About_YSA_output_page_2.txt",
-    "YSA_TXTS/About_YSA_output_page_3.txt",
-    "YSA_TXTS/About_YSA_output_page_4.txt",
-    "YSA_TXTS/About_YSA_output_page_5.txt",
-    "YSA_TXTS/About_YSA_output_page_6.txt",
-]
+doc_names = {'About_YSA': 7, 'Definition_Of_Homeless': 5}
+
+file_names = []
+
+for doc, length in doc_names.items():
+    file_names = file_names + ([f'YSA_TXTS/{doc}/{doc}_{i}.txt' for i in range(length)])
 
 # Initialize an empty list to hold all documents
 all_documents = [] # this is just a copy, you don't have to use this
