@@ -214,7 +214,8 @@ if prompt := st.chat_input("Tell me about YSA"):
     # Based on the context: {ref_from_internet}, 
     engineered_prompt = f"""
         Based on the context: {ref_from_db_search},
-        answer the user question: {question}
+        answer the user question: {question}.
+        Answer the question directly (for example, don't say "based on the context, ...)
     """
 
     answer = call_chatgpt(engineered_prompt)
