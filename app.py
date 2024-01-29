@@ -152,7 +152,7 @@ def convert_to_list_of_dict(df: pd.DataFrame) -> List[Dict[str, str]]:
 # Tiny_House_Village_Overview, Tiny_House_Village, Youth_Leaders_Examples, Youth_Leaders_Overview, YSA_Supporters_Lists,
 # YSA_Supporters_Overview])
 
-doc_names = {'About_YSA': 7, 'Definition_Of_Homeless': 5}
+doc_names = {'About_YSA': 7, 'Definition_Of_Homeless': 5, 'Board_Of_Directors': 5, 'Our_Team': 2, 'Programs': 7, 'Tiny_House_Village_Application_Process': 5, 'Tiny_House_Village_Overview': 17, 'Tiny_House_Village': 8, 'Youth_Leaders_Examples': 11, 'Youth_Leaders_Overview': 1, 'YSA_Supporters_Lists': 10, 'YSA_Supporters_Overview': 1}
 
 file_names = []
 
