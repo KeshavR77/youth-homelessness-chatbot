@@ -216,6 +216,7 @@ if prompt := st.chat_input("Tell me about YSA"):
         Based on the context: {ref_from_db_search},
         answer the user question: {question}.
         Answer the question directly (for example, don't say "based on the context, ...)
+        If the answer cannot be found in the context, respond "Sorry, I do not know the answer."
     """
 
     answer = call_chatgpt(engineered_prompt)
