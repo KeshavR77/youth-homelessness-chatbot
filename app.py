@@ -203,10 +203,10 @@ if prompt := st.chat_input("Tell me about YSA"):
     docs = db.similarity_search(question)
 
     ref_from_db_search = docs[0].page_content
-    print(ref_from_db_search)
+    st.write(ref_from_db_search)
 
     ref_from_db_search = ['' + docs[i].page_content for i in range(len(docs))]
-    print(ref_from_db_search)
+    st.write(ref_from_db_search)
 
     # df_screened_by_dist_score = add_dist_score_column(
     #     df, question
