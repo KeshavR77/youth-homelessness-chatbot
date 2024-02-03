@@ -5,10 +5,10 @@ import openai
 
 # client = OpenAI(api_key = st.secrets["OPENAI_API_KEY"])
 
-from langchain.agents import load_tools
-from langchain.agents import initialize_agent
-from langchain.agents import AgentType
-from langchain.llms import OpenAI as Langchain_OpenAI
+# from langchain.agents import load_tools
+# from langchain.agents import initialize_agent
+# from langchain.agents import AgentType
+# from langchain.llms import OpenAI as Langchain_OpenAI
 
 import numpy as np
 import pandas as pd
@@ -62,19 +62,19 @@ def call_chatgpt(prompt: str) -> str:
     # Return the generated AI response.
     return ans
 
-SERPAPI_API_KEY = st.secrets["SERPAPI_API_KEY"]
+# SERPAPI_API_KEY = st.secrets["SERPAPI_API_KEY"]
 
-def call_langchain(prompt: str) -> str:
-    llm = Langchain_OpenAI(temperature=0)
-    tools = load_tools(["serpapi", "llm-math"], llm=llm)
-    agent = initialize_agent(
-        tools,
-        llm,
-        agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
-        verbose=True)
-    output = agent.run(prompt)
+# def call_langchain(prompt: str) -> str:
+#     llm = Langchain_OpenAI(temperature=0)
+#     tools = load_tools(["serpapi", "llm-math"], llm=llm)
+#     agent = initialize_agent(
+#         tools,
+#         llm,
+#         agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
+#         verbose=True)
+#     output = agent.run(prompt)
 
-    return output
+#     return output
 
 def openai_text_embedding(prompt: str) -> str:
     return openai.Embedding.create(input=prompt, model="text-embedding-ada-002")[
@@ -191,6 +191,13 @@ for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
+st.sidebar.markdown("""This is an app to help you navigate the website of YSA""")
+
+clear_button = st.sidebar.button("Clear Conversation", key="clear")
+
+if clear_button:
+    st.session_state.messages = []
+
 # React to user input
 if prompt := st.chat_input("Tell me about YSA"):
     # Display user message in chat message container
@@ -211,12 +218,11 @@ if prompt := st.chat_input("Tell me about YSA"):
     # )
     # qa_pairs = convert_to_list_of_dict(df_screened_by_dist_score)
 
-    ref_from_internet = call_langchain(question)
+    # ref_from_internet = call_langchain(question)
 
     # Based on the context: {ref_from_internet}, 
     engineered_prompt = f"""
         Based on the context: {ref_from_db_search},
-        and based on the internet search: {ref_from_internet}
         answer the user question: {question}.
         Answer the question directly (don't say "based on the context, ...")
     """
