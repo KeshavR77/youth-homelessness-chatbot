@@ -5,3 +5,4 @@ scipy
 streamlit
 chromadb==0.3.29
 sentence-transformers
+numexpr
