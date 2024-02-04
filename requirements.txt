@@ -1,5 +1,5 @@
 google-search-results
-# langchain
+langchain
 openai==0.28
 scipy
 streamlit
