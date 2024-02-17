@@ -1,4 +1,7 @@
 import streamlit as st
+from datasets import load_dataset
+import chromadb
+import string
 
 import openai
 # from openai import OpenAI
@@ -152,33 +155,67 @@ def convert_to_list_of_dict(df: pd.DataFrame) -> List[Dict[str, str]]:
 # Tiny_House_Village_Overview, Tiny_House_Village, Youth_Leaders_Examples, Youth_Leaders_Overview, YSA_Supporters_Lists,
 # YSA_Supporters_Overview])
 
-doc_names = {'About_YSA': 7, 'Definition_Of_Homeless': 5, 'Our_Team': 2, 'Programs': 7, 'Tiny_House_Village_Application_Process': 5, 'Tiny_House_Village_Overview': 17, 'Tiny_House_Village': 8, 'Youth_Leaders_Examples': 11, 'Youth_Leaders_Overview': 1, 'YSA_Supporters_Lists': 10, 'YSA_Supporters_Overview': 1}
+# doc_names = {'About_YSA': 7, 'Definition_Of_Homeless': 5, 'Our_Team': 2, 'Programs': 7, 'Tiny_House_Village_Application_Process': 5, 'Tiny_House_Village_Overview': 17, 'Tiny_House_Village': 8, 'Youth_Leaders_Examples': 11, 'Youth_Leaders_Overview': 1, 'YSA_Supporters_Lists': 10, 'YSA_Supporters_Overview': 1}
 
-file_names = []
+# file_names = []
 
-for doc, length in doc_names.items():
-    file_names = file_names + ([f'YSA_TXTS/{doc}/{doc}_{i}.txt' for i in range(length)])
+# for doc, length in doc_names.items():
+#     file_names = file_names + ([f'YSA_TXTS/{doc}/{doc}_{i}.txt' for i in range(length)])
 
-# Initialize an empty list to hold all documents
-all_documents = [] # this is just a copy, you don't have to use this
+# # Initialize an empty list to hold all documents
+# all_documents = [] # this is just a copy, you don't have to use this
 
-# Iterate over each file and load its contents
-for file_name in file_names:
-    loader = TextLoader(file_name)
-    documents = loader.load()
-    all_documents.extend(documents)
+# # Iterate over each file and load its contents
+# for file_name in file_names:
+#     loader = TextLoader(file_name)
+#     documents = loader.load()
+#     all_documents.extend(documents)
 
-# Split the loaded documents into chunks
-text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
-docs = text_splitter.split_documents(all_documents)
+# # Split the loaded documents into chunks
+# text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+# docs = text_splitter.split_documents(all_documents)
 
-# Create the open-source embedding function
-embedding_function = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
+# # Create the open-source embedding function
+# embedding_function = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
 
-# Load the documents into Chroma
-db = Chroma.from_documents(docs, embedding_function)
+# # Load the documents into Chroma
+# db = Chroma.from_documents(docs, embedding_function)
 
 # st.write(answer)
+
+# Load the dataset from a provided source.
+dataset = load_dataset(
+    "eagle0504/youthless-homeless-shelter-web-scrape-dataset-qa-formatted"
+)
+initial_input = "Tell me about YSA"
+
+# Initialize a new client for ChromeDB.
+client = chromadb.Client()
+
+# Generate a random number between 1 billion and 10 billion.
+random_number: int = np.random.randint(low=1e9, high=1e10)
+
+# Generate a random string consisting of 10 uppercase letters and digits.
+random_string: str = "".join(
+    np.random.choice(list(string.ascii_uppercase + string.digits), size=10)
+)
+
+# Combine the random number and random string into one identifier.
+combined_string: str = f"{random_number}{random_string}"
+
+# Create a new collection in ChromeDB with the combined string as its name.
+collection = client.create_collection(combined_string)
+
+
+# Embed and store the first N supports for this demo
+with st.spinner("Loading, please be patient with us ... 🙏"):
+    L = len(dataset["train"]["questions"])
+    collection.add(
+        ids=[str(i) for i in range(0, L)],  # IDs are just strings
+        documents=dataset["train"]["questions"],  # Enter questions here
+        metadatas=[{"type": "support"} for _ in range(0, L)],
+    )
+    db=collection
 
 st.title("Youth Homelessness Chatbot")
 
@@ -207,11 +244,35 @@ if prompt := st.chat_input("Tell me about YSA"):
 
     question = prompt
 
-    docs = db.similarity_search(question)
+    results = collection.query(query_texts=question, n_results=5)
 
-    ref_from_db_search = docs[0].page_content
+    idx = results["ids"][0]
+    idx = [int(i) for i in idx]
+    ref = pd.DataFrame(
+        {
+            "idx": idx,
+            "questions": [dataset["train"]["questions"][i] for i in idx],
+            "answers": [dataset["train"]["answers"][i] for i in idx],
+            "distances": results["distances"][0],
+        }
+    )
+    # special_threshold = st.sidebar.slider('How old are you?', 0, 0.6, 0.1) # 0.3
+    special_threshold = 0.3
+    filtered_ref = ref[ref["distances"] < special_threshold]
+    if filtered_ref.shape[0] > 0:
+        st.success("There are highly relevant information in our database.")
+        ref_from_db_search = filtered_ref["answers"].str.cat(sep=" ")
+        final_ref = filtered_ref
+    else:
+        st.warning(
+            "The database may not have relevant information to help your question so please be aware of hallucinations."
+        )
+        ref_from_db_search = ref["answers"].str.cat(sep=" ")
+        final_ref = ref
 
-    ref_from_db_search = ['' + docs[i].page_content for i in range(len(docs))]
+    # ref_from_db_search = docs[0].page_content
+
+    # ref_from_db_search = ['' + docs[i].page_content for i in range(len(docs))]
 
     # df_screened_by_dist_score = add_dist_score_column(
     #     df, question
@@ -224,7 +285,6 @@ if prompt := st.chat_input("Tell me about YSA"):
     engineered_prompt = f"""
         Based on the context: {ref_from_db_search},
         answer the user question: {question}.
-        Answer the question directly (don't say "based on the context, ...")
     """
 
     answer = call_chatgpt(engineered_prompt)
@@ -233,5 +293,7 @@ if prompt := st.chat_input("Tell me about YSA"):
     # Display assistant response in chat message container
     with st.chat_message("assistant"):
         st.markdown(response)
+        with st.expander("See reference:"):
+            st.table(final_ref)
     # Add assistant response to chat history
     st.session_state.messages.append({"role": "assistant", "content": response})
