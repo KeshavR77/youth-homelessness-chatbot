@@ -183,10 +183,48 @@ def convert_to_list_of_dict(df: pd.DataFrame) -> List[Dict[str, str]]:
 
 # st.write(answer)
 
-# Load the dataset from a provided source.
-dataset = load_dataset(
-    "eagle0504/youthless-homeless-shelter-web-scrape-dataset-qa-formatted"
+st.sidebar.markdown("""This is an app to help you navigate the websites of YSA/Larkin Street""")
+
+org = st.sidebar.selectbox("Which website do you want to ask?", ("YSA", "Larkin"))
+
+if org == "YSA":
+    domain = st.sidebar.selectbox("What do you want to learn about?", ("Domain1", "Domain2"))
+if org == "Larkin":
+    domain = st.sidebar.selectbox("What do you want to learn about?", ("Domain3", "Domain4"))
+
+special_threshold = st.sidebar.number_input(
+    "Insert a threshold for distances score to filter data (default 0.2):",
+    value=0.2,
+    placeholder="Type a number...",
 )
+
+n_results = st.sidebar.slider(
+    "Insert n-results (default 5)",
+    0, 10, 5
+)
+
+clear_button = st.sidebar.button("Clear Conversation", key="clear")
+
+if clear_button:
+    st.session_state.messages = []
+
+# Load the dataset from a provided source.
+if domain == "Domain1":
+    dataset = load_dataset(
+        "eagle0504/youthless-homeless-shelter-web-scrape-dataset-qa-formatted"
+    )
+elif domain == "Domain2":
+    dataset = load_dataset(
+        "eagle0504/youthless-homeless-shelter-web-scrape-dataset-qa-formatted"
+    )
+elif domain == "Domain3":
+    dataset = load_dataset(
+        "eagle0504/youthless-homeless-shelter-web-scrape-dataset-qa-formatted"
+    )
+elif domain == "Domain4":
+    dataset = load_dataset(
+        "eagle0504/youthless-homeless-shelter-web-scrape-dataset-qa-formatted"
+    )
 initial_input = "Tell me about YSA"
 
 # Initialize a new client for ChromeDB.
@@ -228,13 +266,6 @@ for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-st.sidebar.markdown("""This is an app to help you navigate the website of YSA""")
-
-clear_button = st.sidebar.button("Clear Conversation", key="clear")
-
-if clear_button:
-    st.session_state.messages = []
-
 # React to user input
 if prompt := st.chat_input("Tell me about YSA"):
     # Display user message in chat message container
@@ -244,7 +275,7 @@ if prompt := st.chat_input("Tell me about YSA"):
 
     question = prompt
 
-    results = collection.query(query_texts=question, n_results=5)
+    results = collection.query(query_texts=question, n_results=n_results)
 
     idx = results["ids"][0]
     idx = [int(i) for i in idx]
@@ -257,7 +288,7 @@ if prompt := st.chat_input("Tell me about YSA"):
         }
     )
     # special_threshold = st.sidebar.slider('How old are you?', 0, 0.6, 0.1) # 0.3
-    special_threshold = 0.3
+    # special_threshold = 0.3
     filtered_ref = ref[ref["distances"] < special_threshold]
     if filtered_ref.shape[0] > 0:
         st.success("There are highly relevant information in our database.")
