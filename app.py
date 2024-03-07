@@ -188,9 +188,9 @@ st.sidebar.markdown("""This is an app to help you navigate the websites of YSA/L
 org = st.sidebar.selectbox("Which website do you want to ask?", ("YSA", "Larkin"))
 
 if org == "YSA":
-    domain = st.sidebar.selectbox("What do you want to learn about?", ("Domain1", "Domain2"))
+    domain = st.sidebar.selectbox("What do you want to learn about?", ("About Us: Our Mission and Programs", "The Tiny House Empowerment Village", "How to Qualify/Apply to the Tiny House Village", "Our Team and Youth Leaders", "Our Supporters"))
 if org == "Larkin":
-    domain = st.sidebar.selectbox("What do you want to learn about?", ("Domain3", "Domain4"))
+    domain = st.sidebar.selectbox("What do you want to learn about?", ("Domain1", "Domain2"))
 
 special_threshold = st.sidebar.number_input(
     "Insert a threshold for distances score to filter data (default 0.2):",
@@ -209,19 +209,27 @@ if clear_button:
     st.session_state.messages = []
 
 # Load the dataset from a provided source.
-if domain == "Domain1":
+if domain == "About Us: Our Mission and Programs":
+    dataset = load_dataset(
+        "KeshavRa/About_YSA_Database"
+    )
+elif domain == "The Tiny House Empowerment Village":
     dataset = load_dataset(
         "eagle0504/youthless-homeless-shelter-web-scrape-dataset-qa-formatted"
     )
-elif domain == "Domain2":
+elif domain == "How to Qualify/Apply for the Tiny House Village":
     dataset = load_dataset(
         "eagle0504/youthless-homeless-shelter-web-scrape-dataset-qa-formatted"
     )
-elif domain == "Domain3":
+elif domain == "Our Team and Youth Leaders":
     dataset = load_dataset(
         "eagle0504/youthless-homeless-shelter-web-scrape-dataset-qa-formatted"
     )
-elif domain == "Domain4":
+elif domain == "Our Supporters":
+    dataset = load_dataset(
+        "eagle0504/youthless-homeless-shelter-web-scrape-dataset-qa-formatted"
+    )
+else:
     dataset = load_dataset(
         "eagle0504/youthless-homeless-shelter-web-scrape-dataset-qa-formatted"
     )
